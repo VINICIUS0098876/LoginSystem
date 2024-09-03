@@ -11,7 +11,8 @@ const insertEndereco = async function(dadosEndereco){
         '${dadosEndereco.logradouro}',
         '${dadosEndereco.complemento}',
         '${dadosEndereco.cidade}',
-        '${dadosEndereco.numero}')`
+        '${dadosEndereco.numero}',
+        '${dadosEndereco.id_usuario}')`
         console.log(sql)
         
         let result = await prisma.$executeRawUnsafe(sql)
@@ -22,11 +23,35 @@ const insertEndereco = async function(dadosEndereco){
            return false
         }
     } catch (error) {
+        console.log(error)
         return false
     }
 }
 
-const updateEndereco = async function(){}
+const updateEndereco = async function(dadosEndereco, idEndereco){
+    let sql
+    try {
+        sql = `update tbl_enderecos set
+        cep = '${dadosEndereco.cep}',
+        logradouro = '${dadosEndereco.logradouro}',
+        complemento = '${dadosEndereco.complemento}',
+        cidade = '${dadosEndereco.cidade}',
+        numero = '${dadosEndereco.numero}',
+        id_usuario = '${dadosEndereco.id_usuario}'
+        where tbl_enderecos.id_endereco = ${idEndereco}`
+        
+        console.log(sql)
+        let result = await prisma.$executeRawUnsafe(sql)
+        if(result){
+        return true
+     }else{
+        return false
+     }
+    } catch (error) {
+        console.log(error);
+        return false
+    }
+}
 
 const deleteEndereco = async function(id){
     try {

@@ -112,7 +112,7 @@ const setAtualizarUsuario = async function(id, dadoAtualizado, contentType){
                         }
                         
                             // Encaminha os dados do filme para o DAO inserir no DB
-                            let dadosEndereco= await usuarioDAO.updateUsuario(dadoAtualizado, idUsuario)
+                            let dadosUsuario= await usuarioDAO.updateUsuario(dadoAtualizado, idUsuario)
                 
                             // Validação para verificar se o DAO inseriu os dados do DB
                         
@@ -152,7 +152,7 @@ const setDeletarUsuario = async function(id){
             return message.ERROR_INVALID_ID
         }else{        
 
-            let dadosEndereco= await usuarioDAO.deleteUsuario(idUsuario)
+            let dadosUsuario= await usuarioDAO.deleteUsuario(idUsuario)
     
         
             if(dadosUsuario){
@@ -171,11 +171,19 @@ const setListarUsuario = async function(){
     try {
         let usuarioJSON = {}
 
-   let dadosEndereco= await usuarioDAO.selectAllUsuario()
+   let dadosUsuario= await usuarioDAO.selectAllUsuario()
    {
     if(dadosUsuario){
 
         if(dadosUsuario.length> 0){
+
+            for(let usuario of dadosUsuario){
+                let enderecoUsuario = await usuarioDAO.selectEnderecoByIdUsuario(usuario.id_usuario)
+                usuario.enderecos = enderecoUsuario
+            }
+
+
+
             usuarioJSON.usuarios = dadosUsuario
             usuarioJSON.quantidade = dadosUsuario.length
             usuarioJSON.status_code = 200
@@ -211,7 +219,7 @@ const setListarUsuarioById = async function(id){
     }else{
 
         //Encaminha para o DAO localizar o id do filme 
-        let dadosEndereco= await usuarioDAO.selectUsuarioById(idUsuario)
+        let dadosUsuario= await usuarioDAO.selectUsuarioById(idUsuario)
 
         // Validação para verificar se existem dados de retorno
         if(dadosUsuario){

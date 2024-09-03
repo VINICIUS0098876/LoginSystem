@@ -105,9 +105,29 @@ const selectUsuarioById = async function(id){
         }
 }
 
+const selectEnderecoByIdUsuario = async function(id){
+    try {
+        // Realiza a busca do veiculo pelo ID do cliente
+        let sql = `SELECT e.id_endereco, e.cep, e.logradouro, e.complemento, e.cidade, e.numero
+        FROM tbl_enderecos e
+        JOIN tbl_usuarios u ON e.id_usuario = u.id_usuario
+        WHERE u.id_usuario = ${id}`;
+    
+        // Executa no banco de dados o script sql
+        let rsCliente = await prisma.$queryRawUnsafe(sql);
+
+            return rsCliente;
+    
+        } catch (error) {
+            console.log(error)
+            return false;
+            
+        }
+}
+
 const idUsuario = async function(){
     try {
-        let sql = `SELECT MAX(id_usuario) AS id FROM tbl_usuarios`
+        let sql = `SELECT MAX(id_usuario) AS id_usuario FROM tbl_usuarios;`
 
         let sqlID = await prisma.$queryRawUnsafe(sql)
 
@@ -124,5 +144,6 @@ module.exports = {
     deleteUsuario,
     selectAllUsuario,
     selectUsuarioById,
-    idUsuario
+    idUsuario,
+    selectEnderecoByIdUsuario
 }

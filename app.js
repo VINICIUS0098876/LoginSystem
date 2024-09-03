@@ -60,16 +60,16 @@ const bodyParserJSON = bodyParser.json()
 
         let idUsuario = request.params.id
     
-        let dadosEndereco= await controllerUsuario.setDeletarUsuario(idUsuario);
+        let dadosUsuario= await controllerUsuario.setDeletarUsuario(idUsuario);
     
-        response.status(dadosEndereco.status_code);
+        response.status(dadosUsuario.status_code);
         response.json(dadosUsuario)
     })
 
     app.get('/v1/loginSystem/usuario', cors(),async function (request,response,next){
 
         // chama a função da controller para retornar os filmes;
-        let dadosEndereco= await controllerUsuario.setListarUsuario();
+        let dadosUsuario= await controllerUsuario.setListarUsuario();
     
         // validação para retornar o Json dos filmes ou retornar o erro 404;
         if(dadosUsuario){
@@ -87,7 +87,7 @@ const bodyParserJSON = bodyParser.json()
         let idUsuario = request.params.id
     
         //encaminha o id para a acontroller buscar o filme
-        let dadosEndereco= await controllerUsuario.setListarUsuarioById(idUsuario)
+        let dadosUsuario= await controllerUsuario.setListarUsuarioById(idUsuario)
     
         response.status(dadosUsuario.status_code);
         response.json(dadosUsuario);
@@ -120,6 +120,19 @@ const bodyParserJSON = bodyParser.json()
     
         response.status(resultDadosNovoEndereco.status_code);
         response.json(resultDadosNovoEndereco);
+    
+    })
+
+    app.put('/v1/loginSystem/enderecoAtualizar/:id', cors(), bodyParserJSON, async function(request,response,next){
+
+        let idEndereco = request.params.id
+        let contentType = request.headers['content-type'];
+        let dadosBody = request.body
+    
+        let resultUptadeEndereco = await controllerEndereco.setAtualizarEndereco(idEndereco, dadosBody, contentType)
+    
+        response.status(resultUptadeEndereco.status_code)
+        response.json(resultUptadeEndereco)
     
     })
 
