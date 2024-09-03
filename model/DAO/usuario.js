@@ -15,11 +15,17 @@ const prisma = new PrismaClient()
 
 const insertUsuario = async function(dadosUsuario){
     try {
-        const sql = `insert into tbl_usuarios(nome, email, cpf, sexo, senha)values('${dadosUsuario.nome}',
-        '${dadosUsuario.email}',
-        '${dadosUsuario.cpf}',
-        '${dadosUsuario.sexo}',
-        '${dadosUsuario.senha}')`
+        const sql = `insert into tbl_usuarios(nome,email,cpf,sexo,senha,cep,logradouro,complemento,cidade,numero)values(
+            '${dadosUsuario.nome}',
+             '${dadosUsuario.email}',
+              '${dadosUsuario.cpf}',
+              '${dadosUsuario.sexo}',
+              '${dadosUsuario.senha}',
+              '${dadosUsuario.cep}',
+            '${dadosUsuario.logradouro}', 
+            '${dadosUsuario.complemento}',
+            '${dadosUsuario.cidade}',
+            '${dadosUsuario.numero}')`
         console.log(sql)
         
         let result = await prisma.$executeRawUnsafe(sql)
@@ -30,6 +36,7 @@ const insertUsuario = async function(dadosUsuario){
            return false
         }
     } catch (error) {
+        console.log(error)
         return false
     }
 }
@@ -42,7 +49,12 @@ const updateUsuario = async function(dadosUsuario, idUsuario){
         email = '${dadosUsuario.email}',
         cpf = '${dadosUsuario.cpf}',
         sexo = '${dadosUsuario.sexo}',
-        senha = '${dadosUsuario.senha}'
+        senha = '${dadosUsuario.senha}',
+        cep = '${dadosUsuario.cep}',
+        logradouro = '${dadosUsuario.logradouro}',
+        complemento = '${dadosUsuario.complemento}',
+        cidade = '${dadosUsuario.cidade}',
+        numero = '${dadosUsuario.numero}'
         where tbl_usuarios.id_usuario = ${idUsuario}`
         
         console.log(sql)
@@ -147,3 +159,4 @@ module.exports = {
     idUsuario,
     selectEnderecoByIdUsuario
 }
+

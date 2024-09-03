@@ -3,6 +3,7 @@ const { application } = require('express')
 const bcrypt = require('bcrypt');
 const saltRounds = 10;
 const usuarioDAO = require('../model/DAO/usuario')
+const enderecoDAO = require('../model/DAO/endereco')
 // Import do arquivo de configuração do projeto
 const message = require('../modulo/config.js')
 const { join } = require('@prisma/client/runtime/library.js')
@@ -23,7 +24,13 @@ const setInserirUsuario = async function(dadosUsuario, contentType){
                dadosUsuario.email == ''  ||   dadosUsuario.email == undefined  || dadosUsuario.email == null   || dadosUsuario.email.length > 255 ||
                dadosUsuario.cpf == '' ||  dadosUsuario.cpf == undefined || dadosUsuario.cpf == null  || dadosUsuario.cpf.length > 15 ||
                dadosUsuario.sexo == '' ||  dadosUsuario.sexo == undefined || dadosUsuario.sexo == null  || dadosUsuario.sexo.length > 20 ||
-               dadosUsuario.senha == '' ||  dadosUsuario.senha == undefined || dadosUsuario.senha == null  || dadosUsuario.senha.length > 255
+               dadosUsuario.senha == '' ||  dadosUsuario.senha == undefined || dadosUsuario.senha == null  || dadosUsuario.senha.length > 255 ||
+               dadosUsuario.cep == '' ||  dadosUsuario.cep  == undefined || dadosUsuario.cep  == null  || dadosUsuario.cep .length > 20 ||
+               dadosUsuario.logradouro == '' ||  dadosUsuario.logradouro == undefined || dadosUsuario.logradouro == null  || dadosUsuario.logradouro.length > 255 || 
+               dadosUsuario.complemento == '' ||  dadosUsuario.complemento == undefined || dadosUsuario.complemento == null  || dadosUsuario.complemento.length > 255 ||
+               dadosUsuario.cidade == '' ||  dadosUsuario.cidade == undefined || dadosUsuario.cidade == null  || dadosUsuario.cidade.length > 150 ||
+               dadosUsuario.numero == '' ||  dadosUsuario.numero == undefined || dadosUsuario.numero == null  || dadosUsuario.numero.length > 30 
+
             ){
 
                 
@@ -93,15 +100,19 @@ const setAtualizarUsuario = async function(id, dadoAtualizado, contentType){
             }else{
                 // Cria o objeto JSON para devolver os dados criados na requisição
                 let atualizarUsuarioJSON = {}
-                // console.log(idClassificacao);
-                // console.log(dadoAtualizado);
+                
                     //Validação de campos obrigatórios ou com digitação inválida
                     if(dadoAtualizado.nome == ''    || dadoAtualizado.nome == undefined       ||  dadoAtualizado.nome == null               || dadoAtualizado.nome.length > 255 ||
                     dadoAtualizado.email == ''  ||   dadoAtualizado.email == undefined  || dadoAtualizado.email == null   || dadoAtualizado.email.length > 255 ||
-                    dadoAtualizado.cpf == '' ||  dadoAtualizado.cpf == undefined || dadoAtualizado.cpf == null  || dadoAtualizado.cpf.length > 15 ||   
+                    dadoAtualizado.cpf == '' ||  dadoAtualizado.cpf == undefined || dadoAtualizado.cpf == null  || dadoAtualizado.cpf.length > 15 ||
                     dadoAtualizado.sexo == '' ||  dadoAtualizado.sexo == undefined || dadoAtualizado.sexo == null  || dadoAtualizado.sexo.length > 20 ||
-                    dadoAtualizado.senha == '' ||  dadoAtualizado.senha == undefined || dadoAtualizado.senha == null  || dadoAtualizado.senha.length > 255        
-                    ){
+                    dadoAtualizado.senha == '' ||  dadoAtualizado.senha == undefined || dadoAtualizado.senha == null  || dadoAtualizado.senha.length > 255 ||
+                    dadoAtualizado.cep == '' ||  dadoAtualizado.cep  == undefined || dadoAtualizado.cep  == null  || dadoAtualizado.cep .length > 20 ||
+                    dadoAtualizado.logradouro == '' ||  dadoAtualizado.logradouro == undefined || dadoAtualizado.logradouro == null  || dadoAtualizado.logradouro.length > 255 || 
+                    dadoAtualizado.complemento == '' ||  dadoAtualizado.complemento == undefined || dadoAtualizado.complemento == null  || dadoAtualizado.complemento.length > 255 ||
+                    dadoAtualizado.cidade == '' ||  dadoAtualizado.cidade == undefined || dadoAtualizado.cidade == null  || dadoAtualizado.cidade.length > 150 ||
+                    dadoAtualizado.numero == '' ||  dadoAtualizado.numero == undefined || dadoAtualizado.numero == null  || dadoAtualizado.numero.length > 30 
+     ){
                         return message.ERROR_REQUIRED_FIELDS
                     }
                 
@@ -177,10 +188,10 @@ const setListarUsuario = async function(){
 
         if(dadosUsuario.length> 0){
 
-            for(let usuario of dadosUsuario){
-                let enderecoUsuario = await usuarioDAO.selectEnderecoByIdUsuario(usuario.id_usuario)
-                usuario.enderecos = enderecoUsuario
-            }
+            // for(let usuario of dadosUsuario){
+            //     let enderecoUsuario = await enderecoDAO.selectEnderecoByid(usuario.id_endereco)
+            //     usuario.enderecos = enderecoUsuario
+            // }
 
 
 
