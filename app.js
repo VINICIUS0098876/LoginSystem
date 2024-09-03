@@ -37,7 +37,6 @@ const bodyParserJSON = bodyParser.json()
 
 /*********************** Import dos arquivos de controller do projeto ***********************************/
     const controllerUsuario = require('./controller/controller_usuario.js')
-    const controllerEndereco = require('./controller/controller_endereco.js')
 
 /*********************** USUARIO ***********************************/
     app.post('/v1/loginSystem/usuario', cors(), bodyParserJSON, async function (request, response,next ){
@@ -103,36 +102,6 @@ const bodyParserJSON = bodyParser.json()
     
         response.status(resultUptadeUsuario.status_code)
         response.json(resultUptadeUsuario)
-    
-    })
-
-    /*********************** ENDEREÇO ***********************************/
-    app.post('/v1/loginSystem/endereco', cors(), bodyParserJSON, async function (request, response,next ){
-
-        // recebe o ContentType com os tipos de dados encaminhados na requisição
-        let contentType = request.headers['content-type'];
-    
-        // vou receber o que chegar no corpo da requisição e guardar nessa variável local
-        let dadosBody = request.body;
-        // encaminha os dados para a controller enviar para o DAO
-        let resultDadosNovoEndereco = await controllerEndereco.setInserirEndereco(dadosBody, contentType)
-    
-    
-        response.status(resultDadosNovoEndereco.status_code);
-        response.json(resultDadosNovoEndereco);
-    
-    })
-
-    app.put('/v1/loginSystem/enderecoAtualizar/:id', cors(), bodyParserJSON, async function(request,response,next){
-
-        let idEndereco = request.params.id
-        let contentType = request.headers['content-type'];
-        let dadosBody = request.body
-    
-        let resultUptadeEndereco = await controllerEndereco.setAtualizarEndereco(idEndereco, dadosBody, contentType)
-    
-        response.status(resultUptadeEndereco.status_code)
-        response.json(resultUptadeEndereco)
     
     })
 
