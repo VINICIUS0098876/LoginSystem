@@ -15,17 +15,20 @@ const prisma = new PrismaClient()
 
 const insertUsuario = async function(dadosUsuario){
     try {
-        const sql = `insert into tbl_usuarios(nome,email,cpf,sexo,senha,cep,logradouro,complemento,cidade,numero)values(
+        const sql = `CALL sp_inserir_usuario_com_endereco(
             '${dadosUsuario.nome}',
-             '${dadosUsuario.email}',
-              '${dadosUsuario.cpf}',
-              '${dadosUsuario.sexo}',
-              '${dadosUsuario.senha}',
-              '${dadosUsuario.cep}',
-            '${dadosUsuario.logradouro}', 
+            '${dadosUsuario.email}',
+            '${dadosUsuario.cpf}',
+            '${dadosUsuario.sexo}',
+            '${dadosUsuario.senha}',
+            '${dadosUsuario.data_nascimento}',
+            '${dadosUsuario.cep}',
+            '${dadosUsuario.logradouro}',
             '${dadosUsuario.complemento}',
             '${dadosUsuario.cidade}',
-            '${dadosUsuario.numero}')`
+            '${dadosUsuario.numero}'
+        );
+        `
         console.log(sql)
         
         let result = await prisma.$executeRawUnsafe(sql)
@@ -50,11 +53,7 @@ const updateUsuario = async function(dadosUsuario, idUsuario){
         cpf = '${dadosUsuario.cpf}',
         sexo = '${dadosUsuario.sexo}',
         senha = '${dadosUsuario.senha}',
-        cep = '${dadosUsuario.cep}',
-        logradouro = '${dadosUsuario.logradouro}',
-        complemento = '${dadosUsuario.complemento}',
-        cidade = '${dadosUsuario.cidade}',
-        numero = '${dadosUsuario.numero}'
+        data_nascimento = '${dadosUsuario.data_nascimento}'
         where tbl_usuarios.id_usuario = ${idUsuario}`
         
         console.log(sql)
@@ -88,7 +87,7 @@ const deleteUsuario = async function(id){
 
 const selectAllUsuario = async function(){
     try {
-        let sql = 'select * from tbl_usuarios'; 
+        let sql = 'SELECT * FROM vw_usuarios_enderecos'; 
 
     let rsUsuario = await prisma.$queryRawUnsafe(sql)
 

@@ -3,7 +3,7 @@ const { application } = require('express')
 const bcrypt = require('bcrypt');
 const saltRounds = 10;
 const usuarioDAO = require('../model/DAO/usuario')
-const enderecoDAO = require('../model/DAO/endereco')
+
 // Import do arquivo de configuração do projeto
 const message = require('../modulo/config.js')
 const { join } = require('@prisma/client/runtime/library.js')
@@ -25,11 +25,7 @@ const setInserirUsuario = async function(dadosUsuario, contentType){
                dadosUsuario.cpf == '' ||  dadosUsuario.cpf == undefined || dadosUsuario.cpf == null  || dadosUsuario.cpf.length > 15 ||
                dadosUsuario.sexo == '' ||  dadosUsuario.sexo == undefined || dadosUsuario.sexo == null  || dadosUsuario.sexo.length > 20 ||
                dadosUsuario.senha == '' ||  dadosUsuario.senha == undefined || dadosUsuario.senha == null  || dadosUsuario.senha.length > 255 ||
-               dadosUsuario.cep == '' ||  dadosUsuario.cep  == undefined || dadosUsuario.cep  == null  || dadosUsuario.cep .length > 20 ||
-               dadosUsuario.logradouro == '' ||  dadosUsuario.logradouro == undefined || dadosUsuario.logradouro == null  || dadosUsuario.logradouro.length > 255 || 
-               dadosUsuario.complemento == '' ||  dadosUsuario.complemento == undefined || dadosUsuario.complemento == null  || dadosUsuario.complemento.length > 255 ||
-               dadosUsuario.cidade == '' ||  dadosUsuario.cidade == undefined || dadosUsuario.cidade == null  || dadosUsuario.cidade.length > 150 ||
-               dadosUsuario.numero == '' ||  dadosUsuario.numero == undefined || dadosUsuario.numero == null  || dadosUsuario.numero.length > 30 
+               dadosUsuario.data_nascimento == '' ||  dadosUsuario.data_nascimento == undefined || dadosUsuario.data_nascimento == null  || dadosUsuario.data_nascimento.length > 10
 
             ){
 
