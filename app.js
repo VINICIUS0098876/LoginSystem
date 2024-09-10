@@ -39,7 +39,7 @@ const bodyParserJSON = bodyParser.json()
     const controllerUsuario = require('./controller/controller_usuario.js')
 
 /*********************** USUARIO ***********************************/
-    app.post('/v1/loginSystem/usuario', cors(), bodyParserJSON, async function (request, response,next ){
+    app.post('/v1/vital/usuario', cors(), bodyParserJSON, async function (request, response,next ){
 
         // recebe o ContentType com os tipos de dados encaminhados na requisição
         let contentType = request.headers['content-type'];
@@ -55,7 +55,23 @@ const bodyParserJSON = bodyParser.json()
     
     })
 
-    app.delete('/v1/loginSystem/usuario/:id', cors (), async function (request,response,next){
+    app.post('/v1/vital/loginUsuario', cors(), bodyParserJSON, async function (request, response,next ){
+
+        // recebe o ContentType com os tipos de dados encaminhados na requisição
+        let contentType = request.headers['content-type'];
+    
+        // vou receber o que chegar no corpo da requisição e guardar nessa variável local
+        let dadosBody = request.body;
+        // encaminha os dados para a controller enviar para o DAO
+        let resultDadosNovoUsuario = await controllerUsuario.setLoginUsuario(dadosBody, contentType)
+    
+    
+        response.status(resultDadosNovoUsuario.status_code);
+        response.json(resultDadosNovoUsuario);
+    
+    })
+
+    app.delete('/v1/vital/usuario/:id', cors (), async function (request,response,next){
 
         let idUsuario = request.params.id
     
@@ -65,7 +81,7 @@ const bodyParserJSON = bodyParser.json()
         response.json(dadosUsuario)
     })
 
-    app.get('/v1/loginSystem/usuario', cors(),async function (request,response,next){
+    app.get('/v1/vital/usuario', cors(),async function (request,response,next){
 
         // chama a função da controller para retornar os filmes;
         let dadosUsuario= await controllerUsuario.setListarUsuario();
@@ -80,7 +96,7 @@ const bodyParserJSON = bodyParser.json()
         }
     });
 
-    app.get('/v1/loginSystem/usuario/:id', cors(), async function(request,response,next){
+    app.get('/v1/vital/usuario/:id', cors(), async function(request,response,next){
 
         // recebe o id da requisição
         let idUsuario = request.params.id
@@ -92,7 +108,7 @@ const bodyParserJSON = bodyParser.json()
         response.json(dadosUsuario);
     })
 
-    app.put('/v1/loginSystem/usuarioAtualizar/:id', cors(), bodyParserJSON, async function(request,response,next){
+    app.put('/v1/vital/usuarioAtualizar/:id', cors(), bodyParserJSON, async function(request,response,next){
 
         let idUsuario = request.params.id
         let contentType = request.headers['content-type'];

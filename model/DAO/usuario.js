@@ -19,19 +19,43 @@ const insertUsuario = async function(dadosUsuario){
             '${dadosUsuario.nome}',
             '${dadosUsuario.email}',
             '${dadosUsuario.cpf}',
-            '${dadosUsuario.sexo}',
+            '${dadosUsuario.id_sexo}',
             '${dadosUsuario.senha}',
             '${dadosUsuario.data_nascimento}',
             '${dadosUsuario.cep}',
             '${dadosUsuario.logradouro}',
             '${dadosUsuario.complemento}',
             '${dadosUsuario.cidade}',
+            '${dadosUsuario.estado}',
             '${dadosUsuario.numero}'
         );
         `
         console.log(sql)
         
         let result = await prisma.$executeRawUnsafe(sql)
+
+        if(result){
+           return true
+        }else{
+           return false
+        }
+    } catch (error) {
+        console.log(error)
+        return false
+    }
+}
+
+const loginUsuario = async function(dadosUsuario){
+    try {
+        const sql = `CALL sp_login_usuario(
+            '${dadosUsuario.email}',
+            '${dadosUsuario.senha}'
+        );
+        `
+
+        let result = await prisma.$executeRawUnsafe(sql)
+
+        console.log(sql);
 
         if(result){
            return true
@@ -51,7 +75,7 @@ const updateUsuario = async function(dadosUsuario, idUsuario){
         nome = '${dadosUsuario.nome}',
         email = '${dadosUsuario.email}',
         cpf = '${dadosUsuario.cpf}',
-        sexo = '${dadosUsuario.sexo}',
+        id_sexo = '${dadosUsuario.id_sexo}',
         senha = '${dadosUsuario.senha}',
         data_nascimento = '${dadosUsuario.data_nascimento}'
         where tbl_usuarios.id_usuario = ${idUsuario}`
@@ -102,7 +126,7 @@ const selectAllUsuario = async function(){
 const selectUsuarioById = async function(id){
     try {
         // Realiza a busca do genero pelo ID
-        let sql = `select * from tbl_usuarios where id_usuario = ${id}`;
+        let sql = `select * from vw_usuarios_enderecos where id_usuario = ${id}`;
     
         // Executa no banco de dados o script sql
         let rsUsuario = await prisma.$queryRawUnsafe(sql);
@@ -149,8 +173,11 @@ const idUsuario = async function(){
     }
 }
 
+
+
 module.exports = {
     insertUsuario,
+    loginUsuario,
     updateUsuario,
     deleteUsuario,
     selectAllUsuario,

@@ -1,8 +1,7 @@
 // Import do arquivo responsavel pela interação com DB(model)
 const { application } = require('express')
-const bcrypt = require('bcrypt');
-const saltRounds = 10;
 const usuarioDAO = require('../model/DAO/usuario')
+const sexoDAO = require('../model/DAO/sexo.js')
 
 // Import do arquivo de configuração do projeto
 const message = require('../modulo/config.js')
@@ -23,7 +22,7 @@ const setInserirUsuario = async function(dadosUsuario, contentType){
             if(dadosUsuario.nome == ''    || dadosUsuario.nome == undefined       ||  dadosUsuario.nome == null               || dadosUsuario.nome.length > 255 ||
                dadosUsuario.email == ''  ||   dadosUsuario.email == undefined  || dadosUsuario.email == null   || dadosUsuario.email.length > 255 ||
                dadosUsuario.cpf == '' ||  dadosUsuario.cpf == undefined || dadosUsuario.cpf == null  || dadosUsuario.cpf.length > 15 ||
-               dadosUsuario.sexo == '' ||  dadosUsuario.sexo == undefined || dadosUsuario.sexo == null  || dadosUsuario.sexo.length > 20 ||
+               dadosUsuario.id_sexo == '' ||  dadosUsuario.id_sexo == undefined || dadosUsuario.id_sexo == null  || dadosUsuario.id_sexo.length > 20 ||
                dadosUsuario.senha == '' ||  dadosUsuario.senha == undefined || dadosUsuario.senha == null  || dadosUsuario.senha.length > 255 ||
                dadosUsuario.data_nascimento == '' ||  dadosUsuario.data_nascimento == undefined || dadosUsuario.data_nascimento == null  || dadosUsuario.data_nascimento.length > 10
 
@@ -34,19 +33,70 @@ const setInserirUsuario = async function(dadosUsuario, contentType){
                 return message.ERROR_REQUIRED_FIELDS
                 
             } else {
+        
+            
+                // Encaminha os dados do filme para o DAO inserir dados
+                let novoUsuario = await usuarioDAO.insertUsuario(dadosUsuario);
+                
+                // validação para verificar se o DAO inseriu os dados do BD
+                if (novoUsuario)
+                {
+        
+                    let ultimoId = await usuarioDAO.idUsuario()
+                    dadosUsuario.id = ultimoId[0].id
+                
+                    // se inseriu cria o JSON dos dados (201)
+                    novoUsuarioJSON.usuario  = dadosUsuario
+                    novoUsuarioJSON.status = message.SUCCESS_CREATED_ITEM.status
+                    novoUsuarioJSON.status_code = message.SUCCESS_CREATED_ITEM.status_code
+                    novoUsuarioJSON.message = message.SUCCESS_CREATED_ITEM.message 
+        
+                    return novoUsuarioJSON; // 201
+                }else{
+                 
+                    return message.ERROR_INTERNAL_SERVER_DB // 500
+                    }
+                  
+              }
+            } else {
+                return message.ERROR_CONTENT_TYPE // 415
+            }
+        } catch(error){
+            console.log(error);
+            return message.ERROR_INTERNAL_SERVER // 500
+        }
+}
+
+const setLoginUsuario = async function(dadosUsuario, contentType){
+    try{
+
+        
+        // validação para aplicação do contentType
+        if(String(contentType).toLowerCase() == 'application/json'){
+            
+            // cria o objeto JSON para devolver os dados criados na requisição
+            let novoUsuarioJSON = {};            
+        
+            // validação de campos obrigatorios ou com digitação inválida
+            if(
+               dadosUsuario.email == ''  ||   dadosUsuario.email == undefined  || dadosUsuario.email == null   || dadosUsuario.email.length > 255 ||
+               dadosUsuario.senha == '' ||  dadosUsuario.senha == undefined || dadosUsuario.senha == null  || dadosUsuario.senha.length > 255 
+            ){
+
+                
+                // return do status code 400
+                return message.ERROR_REQUIRED_FIELDS
+                
+            } else {
                 // console.log(dadosClassificacao)
         
                 // Gera o hash da senha
-                const hashedPassword = await bcrypt.hash(dadosUsuario.senha, saltRounds);
                 
-                // Atualiza dadosEnderecocom a senha hash
-                dadosUsuario.senha = hashedPassword;
-        
              
              
         
                 // Encaminha os dados do filme para o DAO inserir dados
-                let novoUsuario = await usuarioDAO.insertUsuario(dadosUsuario);
+                let novoUsuario = await usuarioDAO.loginUsuario(dadosUsuario);
                 
                 // validação para verificar se o DAO inseriu os dados do BD
                 if (novoUsuario)
@@ -101,13 +151,8 @@ const setAtualizarUsuario = async function(id, dadoAtualizado, contentType){
                     if(dadoAtualizado.nome == ''    || dadoAtualizado.nome == undefined       ||  dadoAtualizado.nome == null               || dadoAtualizado.nome.length > 255 ||
                     dadoAtualizado.email == ''  ||   dadoAtualizado.email == undefined  || dadoAtualizado.email == null   || dadoAtualizado.email.length > 255 ||
                     dadoAtualizado.cpf == '' ||  dadoAtualizado.cpf == undefined || dadoAtualizado.cpf == null  || dadoAtualizado.cpf.length > 15 ||
-                    dadoAtualizado.sexo == '' ||  dadoAtualizado.sexo == undefined || dadoAtualizado.sexo == null  || dadoAtualizado.sexo.length > 20 ||
-                    dadoAtualizado.senha == '' ||  dadoAtualizado.senha == undefined || dadoAtualizado.senha == null  || dadoAtualizado.senha.length > 255 ||
-                    dadoAtualizado.cep == '' ||  dadoAtualizado.cep  == undefined || dadoAtualizado.cep  == null  || dadoAtualizado.cep .length > 20 ||
-                    dadoAtualizado.logradouro == '' ||  dadoAtualizado.logradouro == undefined || dadoAtualizado.logradouro == null  || dadoAtualizado.logradouro.length > 255 || 
-                    dadoAtualizado.complemento == '' ||  dadoAtualizado.complemento == undefined || dadoAtualizado.complemento == null  || dadoAtualizado.complemento.length > 255 ||
-                    dadoAtualizado.cidade == '' ||  dadoAtualizado.cidade == undefined || dadoAtualizado.cidade == null  || dadoAtualizado.cidade.length > 150 ||
-                    dadoAtualizado.numero == '' ||  dadoAtualizado.numero == undefined || dadoAtualizado.numero == null  || dadoAtualizado.numero.length > 30 
+                    dadoAtualizado.id_sexo == '' ||  dadoAtualizado.id_sexo == undefined || dadoAtualizado.id_sexo == null  || dadoAtualizado.id_sexo.length > 20 ||
+                    dadoAtualizado.senha == '' ||  dadoAtualizado.senha == undefined || dadoAtualizado.senha == null  || dadoAtualizado.senha.length > 255 
      ){
                         return message.ERROR_REQUIRED_FIELDS
                     }
@@ -185,11 +230,9 @@ const setListarUsuario = async function(){
         if(dadosUsuario.length> 0){
 
             // for(let usuario of dadosUsuario){
-            //     let enderecoUsuario = await enderecoDAO.selectEnderecoByid(usuario.id_endereco)
-            //     usuario.enderecos = enderecoUsuario
+            //     let sexoUsuario = await sexoDAO.selectByIdSexo(usuario.id_sexo)
+            //     usuario.sexo = sexoUsuario
             // }
-
-
 
             usuarioJSON.usuarios = dadosUsuario
             usuarioJSON.quantidade = dadosUsuario.length
@@ -255,6 +298,7 @@ const setListarUsuarioById = async function(id){
 
 module.exports = {
     setInserirUsuario,
+    setLoginUsuario,
     setAtualizarUsuario,
     setDeletarUsuario,
     setListarUsuario,
