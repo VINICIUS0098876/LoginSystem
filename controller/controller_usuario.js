@@ -159,9 +159,7 @@ const setAtualizarUsuario = async function(id, dadoAtualizado, contentType){
                 
                     else{
 
-                        if (dadoAtualizado.senha) {
-                            dadoAtualizado.senha = await bcrypt.hash(dadoAtualizado.senha, saltRounds);
-                        }
+                        
                         
                             // Encaminha os dados do filme para o DAO inserir no DB
                             let dadosUsuario= await usuarioDAO.updateUsuario(dadoAtualizado, idUsuario)

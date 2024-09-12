@@ -37,6 +37,7 @@ const bodyParserJSON = bodyParser.json()
 
 /*********************** Import dos arquivos de controller do projeto ***********************************/
     const controllerUsuario = require('./controller/controller_usuario.js')
+    const controllerEmpresa = require('./controller/controller_empresa.js')
 
 /*********************** USUARIO ***********************************/
     app.post('/v1/vital/usuario', cors(), bodyParserJSON, async function (request, response,next ){
@@ -55,21 +56,25 @@ const bodyParserJSON = bodyParser.json()
     
     })
 
-    app.post('/v1/vital/loginUsuario', cors(), bodyParserJSON, async function (request, response,next ){
-
-        // recebe o ContentType com os tipos de dados encaminhados na requisição
-        let contentType = request.headers['content-type'];
+    app.post('/v1/vital/loginUsuario', cors(), bodyParserJSON, async function (request, response, next) {
+        try {
+            // Recebe o Content-Type da requisição
+            const contentType = request.headers['content-type'];
     
-        // vou receber o que chegar no corpo da requisição e guardar nessa variável local
-        let dadosBody = request.body;
-        // encaminha os dados para a controller enviar para o DAO
-        let resultDadosNovoUsuario = await controllerUsuario.setLoginUsuario(dadosBody, contentType)
+            // Recebe os dados do corpo da requisição
+            const dadosBody = request.body;
     
+            // Encaminha os dados para a controller
+            const resultDadosNovoUsuario = await controllerUsuario.setLoginUsuario(dadosBody, contentType);
     
-        response.status(resultDadosNovoUsuario.status_code);
-        response.json(resultDadosNovoUsuario);
+            // Envia a resposta para o cliente
+            response.status(resultDadosNovoUsuario.status_code);
+            response.json(resultDadosNovoUsuario);
+        } catch (error) {
+            next(error);  // Passa o erro para o middleware de tratamento de erros
+        }
+    });
     
-    })
 
     app.delete('/v1/vital/usuario/:id', cors (), async function (request,response,next){
 
@@ -120,6 +125,79 @@ const bodyParserJSON = bodyParser.json()
         response.json(resultUptadeUsuario)
     
     })
+
+     /*********************** EMPRESA ***********************************/
+     app.post('/v1/vital/empresa', cors(), bodyParserJSON, async function (request, response,next ){
+
+
+        // recebe o ContentType com os tipos de dados encaminhados na requisição
+        let contentType = request.headers['content-type'];
+   
+        // vou receber o que chegar no corpo da requisição e guardar nessa variável local
+        let dadosBody = request.body;
+        // encaminha os dados para a controller enviar para o DAO
+        let resultDadosNovaEmpresa = await controllerEmpresa.setInserir(dadosBody, contentType)
+   
+   
+        response.status(resultDadosNovaEmpresa.status_code);
+        response.json(resultDadosNovaEmpresa);
+   
+    })
+
+
+    app.get('/v1/vital/empresa', cors(),async function (request,response,next){
+
+
+        // chama a função da controller para retornar os filmes;
+        let dadosEmpresa = await controllerEmpresa.setListar()
+   
+        // validação para retornar o Json dos filmes ou retornar o erro 404;
+        if(dadosEmpresa){
+            response.json(dadosEmpresa);
+            response.status(dadosEmpresa.status_code);
+        }else{
+            response.json({message: 'Nenhum registro foi encontrado'});
+            response.status(404);
+        }
+    });
+
+    app.get('/v1/vital/empresa/:id', cors(), async function(request,response,next){
+
+        // recebe o id da requisição
+        let idEmpresa = request.params.id
+    
+        //encaminha o id para a acontroller buscar o filme
+        let dadosEmpresa = await controllerEmpresa.setListarPorId(idEmpresa)
+    
+        response.status(dadosEmpresa.status_code);
+        response.json(dadosEmpresa);
+    })
+
+    app.delete('/v1/vital/empresa/:id', cors (), async function (request,response,next){
+
+        let idEmpresa = request.params.id
+    
+        let dadosEmpresa = await controllerEmpresa.setDeletar(idEmpresa);
+    
+        response.status(dadosEmpresa.status_code);
+        response.json(dadosEmpresa)
+    })
+
+    app.put('/v1/vital/empresaAtualizar/:id', cors(), bodyParserJSON, async function(request,response,next){
+
+        let idEmpresa = request.params.id
+        let contentType = request.headers['content-type'];
+        let dadosBody = request.body
+    
+        let resultUptadeEmpresa = await controllerEmpresa.setAtualizar(idEmpresa, dadosBody, contentType)
+    
+        response.status(resultUptadeEmpresa.status_code)
+        response.json(resultUptadeEmpresa)
+    
+    })
+
+
+
 
     app.listen('8080', function(){
         console.log('API funcionando!!')
